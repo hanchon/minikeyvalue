@@ -1,0 +1,23 @@
+version: "3"
+services:
+  volume1:
+    build:
+      context: .
+      dockerfile: "./Dockerfile"
+    environment:
+      - PORT=3001
+    volumes:
+      - /tmp/volume1:/mkv/volume1
+    entrypoint: ["PORT=3001", "/mkv/volume", "/mkv/volume1/"]
+
+  master:
+      build:
+        context: .
+        dockerfile: "./Dockerfile"
+      volumes:
+      - /tmp/indexdb:/mkv/indexdb
+      ports:
+      - "3000:3000"
+      depends_on:
+      - "volume1"
+      entrypoint: ["./mkv", "-volumes", "volume1:3001", "-db", "/mkv/indexdb", "server"]
